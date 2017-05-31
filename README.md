@@ -115,7 +115,8 @@ $ ./etc/load-new.sh malware-folder
 ## Stopping nvmtrace
 ```
 $ pgrep -f java.*nvmtrace | awk 'BEGIN{ORS=" "} 1' | sudo xargs kill -9
-$ sudo killall nvmtrace
+$ sudo killall qemu-system-x86_64
+$ sudo killall tcpdump
 ```
 
 ## Source code navigation
