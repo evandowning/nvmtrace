@@ -1,0 +1,88 @@
+#############################################
+# IPTABLES config file for malware analysis #
+#############################################
+
+# First, set up your NAT
+# PREROUTING: before Linux kernel routing
+# POSTROUTING: after Linux kernel routing
+
+*nat
+
+:PREROUTING ACCEPT [0:0]
+:INPUT ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
+
+# Route any outgoing email traffic to spam trap
+# From wikipedia: SMTP communication between mail servers uses port 25. Mail
+# clients on the other hand, often submit the outgoing emails to a mail server
+# on port 587. Despite being deprecated, mail providers sometimes still permit
+# the use of nonstandard port 465 for this purpose.
+
+-A PREROUTING -p tcp -m tcp --dport 25 -j DNAT --to-destination <spam-trap-ip>:25
+-A PREROUTING -p tcp -m tcp --dport 587 -j DNAT --to-destination <spam-trap-ip>:587
+-A PREROUTING -p tcp -m tcp --dport 465 -j DNAT --to-destination <spam-trap-ip>:465
+
+# Route any outgoing traffic coming from 10.0.0.0/8 through your machine's IP address
+# Quoted from an email from Adam Allred (aallred@cc.gatech.edu):
+# This line ensures that all VMs are source NAT'd, preventing them from
+# establishing standard internet-accessible listening services.
+-A POSTROUTING -s 10.0.0.0/8 -o <internet-interface> -j SNAT --to-source <this-ip>
+
+# Commit the changes
+COMMIT
+
+##############################################
+# Constrain what ports and ip address malware can contact
+
+# Now, let's filter out traffic we don't want
+# INPUT: packets to computer
+# FORWARD: packets being routed through Linux kernel (subset of OUTPUT)
+# OUTPUT: packets from computer (FORWARD'd traffic and traffic that originates from machine)
+
+*filter
+
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+
+-A FORWARD -m conntrack --ctstate INVALID -j DROP
+
+# Quoted from an email from Adam Allred (aallred@cc.gatech.edu):
+# These lines ensure that any outbound traffic destined to well-known ports
+# for Microsoft EPMAP, NetBIOS, and Samba are dropped. These represent core
+# Windows services and malware’s sole reason for interacting with them is to
+# propagate. For example, Conficker exploited MS08-067 to grow to 500,000
+# systems in a few weeks. Outbound traffic to these ports should not be
+# allowed out of the analysis VMs.
+-A FORWARD -p udp -m udp --dport 135:139 -j DROP
+-A FORWARD -p tcp -m tcp --dport 135:139 -j DROP
+-A FORWARD -p udp -m udp --dport 445 -j DROP
+-A FORWARD -p tcp -m tcp --dport 445 -j DROP
+
+# Allow malware to contact some of the network (namely your box and the spam trap)
+-A FORWARD -s 10.0.0.0/8 -d <this-ip> -j ACCEPT
+-A FORWARD -s 10.0.0.0/8 -d <spam-trap-ip> -j ACCEPT
+
+# Prevent malware from contacting private networks
+#-A FORWARD -s 10.0.0.0/8 -d 10.0.0.0/8 -j DROP
+-A FORWARD -s 10.0.0.0/8 -d 172.16.0.0/12 -j DROP
+-A FORWARD -s 10.0.0.0/8 -d 192.168.0.0/16 -j DROP
+
+# Prevent malware from contacting some other network
+-A FORWARD -s 10.0.0.0/8 -d <cidr> -j DROP
+
+# Accept SSH connections
+-A INPUT -i <internet-interface> -p tcp -m tcp --dport 22 -j ACCEPT
+
+# Allow any incoming traffic that has already been established by a connection
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+# Accept pinging
+-A INPUT -i <internet-interface> -p icmp -j ACCEPT
+
+# Reject all other incoming traffic
+-A INPUT -i <internet-interface> -j DROP
+
+# Commit the changes
+COMMIT
