@@ -5,9 +5,9 @@ import java.sql.*;
 public class NVMThreadDB
 {
     private static final String dbHost = "localhost";
-    private static final String dbUser = "username";
+    private static final String dbUser = "dbUser";
     private static final String dbName = "nvmtrace";
-    private static final String dbPass = "password";
+    private static final String dbPass = "dbPass";
 
     private Connection connection = null;
 
