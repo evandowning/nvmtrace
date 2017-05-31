@@ -6,219 +6,235 @@ import java.util.*;
 
 import edu.gatech.util.*;
 
-public class NVMCThread extends Thread{
-    
-    public static final int nvmRunTime = 180;
+public class NVMCThread extends Thread
+{
+    // How much time (in seconds) to run each executable for
+    //public static final int nvmRunTime = 240+60;    // We'll run each sample for 4 minutes and give it an extra minute in case something's slow with the VM
+    public static final int nvmRunTime = 120+120;    // We'll run each sample for 4 minutes and give it an extra minute in case something's slow with the VM
+
+    // How much time (in seconds) to pause to check for new sha256 in DB if none exists
     public static final int pollInterval = 16;
-    public static final int resetInterval = 5;
-    
-    private boolean stop = false;
+
+    // String to hold path of virtual machine configuration files
     private String basePath;
-    
+
     private BufferedWriter log;
     private NVMThreadDB dbase;
     private NVMConfig config;
-        
-    public NVMCThread(String basePath){
-	if(!basePath.endsWith("/"))
+
+    // Constructor for NVMCThread
+    public NVMCThread(String basePath)
+    {
+        // Add a '/' after the directory path if one does not exist
+        if (!basePath.endsWith("/"))
+        {
             this.basePath = basePath + "/";
+        }
         else
+        {
             this.basePath = basePath;
-	
-	try{
-	    final String logPath =  this.basePath + "log.txt";
-	    this.log = new BufferedWriter(new FileWriter(logPath, true));
-	}catch(Exception e){
-	    e.printStackTrace();
-	    System.exit(-1);
-	}
-	
-	this.dbase = new NVMThreadDB();
-	this.config = new NVMConfig(this.dbase);
-    }
-    
-    public String getMacAddr(){
-	return ExecCommand.cat(this.basePath + "cfg/mac")[0];
+        }
+
+        // Construct log file for the virtual machine
+        try
+        {
+            final String logPath =  this.basePath + "log.txt";
+            this.log = new BufferedWriter(new FileWriter(logPath, true));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+
+        /*
+            Give the ability to access database for determining which malware
+            to run next and update the database accordingly.
+        */
+        this.dbase = new NVMThreadDB();
+
+        /*
+            Give the ability to access configuration of nvmtrace
+            files and folders.
+        */
+        this.config = new NVMConfig(this.dbase);
     }
 
-    public String getNetworkAddr(){
-	return ExecCommand.cat(this.basePath + "cfg/ip")[0];
+    // Function to retrieve the MAC address of the virtual machine
+    public String getMacAddr()
+    {
+	    return ExecCommand.cat(this.basePath + "mac")[0];
     }
 
-    public String getIPMINetworkAddr(){
-	return ExecCommand.cat(this.basePath + "cfg/ipmi")[0];
-    }
-    
-    public String getDMTablePath(){
-	return this.basePath + "cfg/dmtable";
-    }
-    
-    public String getNVMDiskPath(){
-	return this.basePath + "disk/";
-    }
-    
-    public String getWorkspaceName(){
-	return ExecCommand.cat(this.basePath + "cfg/name")[0];
-    }
-    
-    public String getCoWDevice(){
-	return "/dev/mapper/" + this.getWorkspaceName();
+    // Function to retrieve the IP address of the virtual machine
+    public String getNetworkAddr()
+    {
+	    return ExecCommand.cat(this.basePath + "ip")[0];
     }
 
-    public String getTargetIQN(){
-        return ExecCommand.cat(this.basePath + "cfg/iqn")[0];
+    // Function to retrieve the location of the virtual machine image
+    public String getNVMDiskPath()
+    {
+	    return ExecCommand.cat(this.basePath + "disk")[0];
     }
 
-    public String getInititatorIQN(){
-        return ExecCommand.cat(this.config.getInititatorIQNPath())[0];
+    /*
+        Function to retrieve the location of the executable for the virtual
+        machine to run.
+    */
+    public String getNVMExecPath()
+    {
+	    return ExecCommand.cat(this.basePath + "exec")[0];
     }
 
-    public String getHBADevPath(){
-        return ExecCommand.cat(this.basePath + "cfg/hbadevpath")[0];
+    // Function to retrieve the location of the virtual machine executable.
+    public String getVMPath()
+    {
+	    return ExecCommand.cat(this.basePath + "vm")[0];
     }
 
-    public String getiSCSIIPPort(){
-        return ExecCommand.cat(this.config.getiSCSIIPPortPath())[0];
+    // Function to retrieve the name of the virtual machine
+    public String getWorkspaceName()
+    {
+	    return ExecCommand.cat(this.basePath + "name")[0];
     }
-    
-    private void logWrite(String message){
-	final String logTimeFormat = "yyyyMMdd HH:mm:ss";
-	
+
+    // Function to write to nvmtrace log file
+    private void logWrite(String message)
+    {
+        final String logTimeFormat = "yyyyMMdd HH:mm:ss";
+
         String logTime = 
-	    new SimpleDateFormat(logTimeFormat).format(new Date());
-        try{
+	        new SimpleDateFormat(logTimeFormat).format(new Date());
+
+        try
+        {
             this.log.write(logTime + " | " + message + "\n");
             this.log.flush();
-        }catch(Exception e){
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
             System.exit(-1);
         }
     }
-    
-    public void resetNVMPower(){
-	String status =
-	    ExecCommand.ipmipwrop(this.getIPMINetworkAddr(),
-				  this.config.getIPMIPasswdPath(), "status");
-	
-	if(status.contains("off"))
-	    ExecCommand.ipmipwrop(this.getIPMINetworkAddr(),
-				  this.config.getIPMIPasswdPath(), "on");
-	else
-	    ExecCommand.ipmipwrop(this.getIPMINetworkAddr(),
-				  this.config.getIPMIPasswdPath(), "reset");
-	
-	ExecCommand.sleep(NVMCThread.resetInterval);
-    }
-    
-    public void prepareNVMDisk(String md5){
-	ExecCommand.dmcreate(this.getWorkspaceName(),
-			     this.getDMTablePath());
-	
-	ExecCommand.kpartx("-a", this.getCoWDevice());
-	ExecCommand.mount(this.getCoWDevice() + "1", this.getNVMDiskPath());
-	
-	ExecCommand.cp(this.config.getInputPath() + md5,
-		       this.getNVMDiskPath() + "artifact.exe");
-    
-	ExecCommand.umount(this.getNVMDiskPath());
-	ExecCommand.kpartx("-d", this.getCoWDevice());
-    }
-    
-    public Vector<Process> startNVMSession(String md5){
-	Vector<Process> nvmSession = new Vector<Process>();
-	
-	this.resetNVMPower();
-	this.prepareNVMDisk(md5);
-	
-	ExecCommand.tcmblock(this.getHBADevPath(), this.getCoWDevice());
-        ExecCommand.lioaddlun(this.getTargetIQN(), this.getWorkspaceName(), 
-                              this.getHBADevPath());
-        ExecCommand.lioaddnp(this.getTargetIQN(), this.getiSCSIIPPort());
-        ExecCommand.liodisauth(this.getTargetIQN());
-        ExecCommand.lioaddnodeacl(this.getTargetIQN(), this.getInititatorIQN());
-        ExecCommand.lioaddlunacl(this.getTargetIQN(), this.getInititatorIQN());
-        ExecCommand.lioentpg(this.getTargetIQN());
-	
-	Process tcpdump = 
-	    ExecCommand.tcpdump(this.config.getNetAddrTransInterface(),
-				this.config.getLocalPcapPath(md5),
-				this.config.
-				  getTCPDumpExpression(this.getMacAddr()));
-	nvmSession.add(tcpdump);
-	
-	return nvmSession;
-    }
-    
-    public void stopNVMSession(String md5, Vector<Process> nvmSession){
-	for(int i = 0; i < nvmSession.size(); i++){
-	    nvmSession.elementAt(i).destroy();
-	    try{
-		nvmSession.elementAt(i).waitFor();
-	    }catch(Exception e){}
-	}
-	ExecCommand.cntrkrm(this.getNetworkAddr());
-        ExecCommand.liodistpg(this.getTargetIQN());
-        ExecCommand.liodeliqn(this.getTargetIQN());
-        ExecCommand.tcmdelhba(this.getHBADevPath());
-    }
-        
-    public void analyzeSessionArtifacts(String md5){
-        ExecCommand.kpartx("-a", this.getCoWDevice());
-        ExecCommand.mount(this.getCoWDevice() + "1", this.getNVMDiskPath());
-        
-        String pcapPath = this.config.getLocalPcapPath(md5);
-        String nvmDiskPath = this.getNVMDiskPath();
-        
+
+    // Function to start virtual machine instance and tcpdump session
+    public Vector<Process> startNVMSession(String sha256)
+    {
+        Vector<Process> nvmSession = new Vector<Process>();
+
         /*
-         * Here, use your favorite network traffic and disk
-         * forensics libraries/tools to identify events and
-         * extract intelligence. pcapPath points to the file
-         * containing network traffic generated by the sample.
-         * nvmDiskPath points to the mounted root of the NVM's
-         * hard disk drive for sample's processing session.
-         */
-        
-        ExecCommand.umount(this.getCoWDevice() + "1");
-        ExecCommand.kpartx("-d", this.getCoWDevice());
+            Copy sha256 executable to folder where virtual macine
+            will retrieve it from.
+        */
+        ExecCommand.cp(this.config.getInputPath() + sha256,
+                       this.getNVMExecPath());
+
+        // Make sure executable has proper permissions
+        ExecCommand.chmod("666", this.getNVMExecPath());
+
+        /*
+            Run tcpdump on designated network interface to record 
+            network activity coming out of virtual machine.
+        */
+        Process tcpdump = 
+            ExecCommand.tcpdump(this.getWorkspaceName(),
+                                this.config.getPcapPath(sha256),
+                                this.config.
+                                    getTCPDumpExpression(this.getMacAddr()));
+
+        // Run virtual machine
+        Process qemu =
+            ExecCommand.qemu(this.getVMPath(),
+                             this.getNVMDiskPath(),
+                             this.getMacAddr(),
+                             this.getWorkspaceName());
+
+        // Add processes to vector so they can be manaaged by stopNVMSession()
+        // These processes will be killed in the order they're inserted
+        nvmSession.add(qemu);
+        nvmSession.add(tcpdump);
+
+        return nvmSession;
     }
 
-    public void clearSessionArtifacts(String md5){
-	ExecCommand.dmremove(this.getWorkspaceName());
-	ExecCommand.rmdir(this.config.getLocalOutputPath(md5));
+    // Function to stop processes (virtual machines and tcpdump's)
+    public void stopNVMSession(String sha256, Vector<Process> nvmSession)
+    {
+        // Kill each process
+        for (int i = 0; i < nvmSession.size(); i++)
+        {
+            nvmSession.elementAt(i).destroy();
+
+            try
+            {
+                nvmSession.elementAt(i).waitFor();
+            }
+            catch (Exception e)
+            {
+            }
+        }
+
+        // Bug in cntrk
+        // Get rid of excess states for MAC address
+        ExecCommand.cntrkrm(this.getNetworkAddr());
     }
 
-    public void requestStop(){
-        this.stop = true;
-    }
-    
-    public void run(){
-	while(true){
-	    if(this.stop){
-		ExecCommand.ipmipwrop(this.getIPMINetworkAddr(),
-				      this.config.getIPMIPasswdPath(), "off");
-		return;
-	    }
-	    
-	    String md5 = this.dbase.getNextSampleMD5();
-	    if(md5 == null){
-		ExecCommand.sleep(NVMCThread.pollInterval);
-		continue;
-	    }
-	    
-	    ExecCommand.mkdir(this.config.getLocalOutputPath(md5));
-	    
-	    this.logWrite("starting nvm for " + md5); 
-	    
-	    Vector<Process> vmSession = this.startNVMSession(md5);
-	    ExecCommand.rm(this.config.getInputPath() + md5);
-	    
-	    ExecCommand.sleep(NVMCThread.nvmRunTime);
-	    this.stopNVMSession(md5, vmSession);
-	    	    
-	    this.logWrite("stopped nvm for " + md5);
-	    
-	    this.analyzeSessionArtifacts(md5);
-	    this.clearSessionArtifacts(md5);
-	}
+    // Function to run thread
+    public void run()
+    {
+        while (true)
+        {
+            // Retrieve the next malware sample
+            String sha256 = this.dbase.getNextSamplesha256();
+
+            /*
+                If no sample is retrieved, wait some amount
+                of time and try again.
+            */
+            if (sha256 == null)
+            {
+                ExecCommand.sleep(NVMCThread.pollInterval);
+                continue;
+            }
+
+            // Create output folder for malware's data
+            ExecCommand.mkdir(this.config.getOutputPath(sha256));
+
+            this.logWrite("starting nvm for " + sha256); 
+
+            // TODO: make it so you don't have to do this every time
+            // For resetting TAP interface
+            String ip = this.getNetworkAddr();
+            char[] ipArray = ip.toCharArray();
+            ipArray[ip.length()-1] = '1';
+            ip = String.valueOf(ipArray);
+            String cidr = ip + "/24";
+
+            // Reset TAP interface
+            ExecCommand.resetTAP(cidr,this.getWorkspaceName());
+
+            // Start virtual machine, tcpdump session, and run malware
+            Vector<Process> vmSession = this.startNVMSession(sha256);
+
+            // Remove malware sample from input folder
+            ExecCommand.rm(this.config.getInputPath() + sha256);
+
+            // Sleep a fixed amount of time to give malware a chance to run
+            ExecCommand.sleep(NVMCThread.nvmRunTime);
+
+            // Stop virtual machine and tcpdump capture
+            this.stopNVMSession(sha256, vmSession);
+
+            // Move system logs to workspace
+            ExecCommand.mkdir(this.config.getSystemDumpPath(sha256));
+            ExecCommand.shellmv(this.getNVMExecPath() + "-dump/*", this.config.getSystemDumpPath(sha256) + "/");
+
+            // Reset TAP interface
+            ExecCommand.resetTAP(cidr,this.getWorkspaceName());
+
+            this.logWrite("stopped nvm for " + sha256);
+        }
     }
 }

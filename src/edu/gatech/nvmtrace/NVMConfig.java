@@ -1,63 +1,41 @@
 package edu.gatech.nvmtrace;
 
-public class NVMConfig{
-    
+public class NVMConfig
+{
     private NVMThreadDB dbase;
 
-    public NVMConfig(NVMThreadDB dbase){
-	this.dbase = dbase;
-    }
-    
-    public String getStorageInterface(){
-	return "nvm-storage";
+    public NVMConfig(NVMThreadDB dbase)
+    {
+	    this.dbase = dbase;
     }
 
-    public String getNetAddrTransInterface(){
-	return "nvm-nat";
-    }
-    
-    public String getEtcPath(){
-	return "/opt/gtisc/etc/";
-    }
-    
-    public String getIPMIPasswdPath(){
-	return this.getEtcPath() + "nvm.ipmi.passwd";
-    }
-    
-    public String getiSCSIIPPortPath(){
-        return this.getEtcPath() + "nvm.iscsi.ipport";
-    }
-    
-    public String getInititatorIQNPath(){
-        return this.getEtcPath() + "nvm.iscsi.initiatoriqn";
-    }
-        
-    public String getInputPath(){
+    public String getInputPath()
+    {
         return "/opt/gtisc/nvmtrace/input/";
     }
-    
-    private String getOutputPrefix(){
-	return "/opt/gtisc/nvmtrace/output/";
-    }
-    
-    public String getOutputParentPath(String md5){
-	return this.getOutputPrefix() + 
-	    this.dbase.getProcessDate(md5) + "/";
-    }
-    
-    public String getLocalOutputPrefix(){
-	return "/opt/gtisc/tmp/";
+
+    private String getOutputPrefix()
+    {
+	    return "/opt/gtisc/nvmtrace/output/";
     }
 
-    public String getLocalOutputPath(String md5){
-	return this.getLocalOutputPrefix() + md5 + "/";
-    }
-    
-    public String getLocalPcapPath(String md5){
-	return this.getLocalOutputPath(md5) + md5 + ".pcap";
+    public String getOutputPath(String sha256)
+    {
+	    return this.getOutputPrefix() + sha256 + "/" + this.dbase.getProcessTime(sha256) + "/";
     }
 
-    public String getTCPDumpExpression(String macAddr){
-	return "ether host " + macAddr;
+    public String getPcapPath(String sha256)
+    {
+	    return this.getOutputPath(sha256) + "dump.pcap";
+    }
+
+    public String getSystemDumpPath(String sha256)
+    {
+	    return this.getOutputPath(sha256) + "sysdump";
+    }
+
+    public String getTCPDumpExpression(String macAddr)
+    {
+	    return "ether host " + macAddr;
     }
 }

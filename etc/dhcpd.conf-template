@@ -1,0 +1,5 @@
+# Use Google's open DNS servers
+option domain-name-servers 8.8.8.8, 8.8.4.4;
+
+# Deny any clients not listed in this file
+deny unknown-clients;
