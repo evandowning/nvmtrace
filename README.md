@@ -12,7 +12,7 @@ as include instructions on how to modify it for your particular interests.
 
 ## Requirements
 
-Debian Linux and Java 6
+Debian 8 Linux (Jessie) and Java 7
 
 ## Setup
 
@@ -51,7 +51,7 @@ Debian Linux and Java 6
 
 ## Installing
 
-If you already have Java installed, make sure you (temporarily) switch to using Java 6 to compile and run:
+If you already have Java installed, make sure you switch to using Java 7 to compile and run:
 
 ```
 $ sudo update-alternatives --config java
@@ -99,24 +99,23 @@ $ sudo /opt/gtisc/bin/nvmtrace.sh
 
 ## Running malware samples
 When new malware is found and added to your folder composed solely of malware
-executables named as their sha256 value, re-run the following command. Nvmtrace
-will automatically grab the new executables and run them.
+samples, re-run the following command. Nvmtrace will automatically grab the
+new executables and run them.
 
-NOTE: this script will only run all samples within folder, even if they've been
-run before.
-
+To run all samples within folder (even if they've been run before):
 ```
-$ ./etc/load.sh sha256-malware-folder
+$ ./etc/load.sh malware-folder
 ```
 
 To run only new (unseen) samples:
 ```
-$ ./etc/load-new.sh sha256-malware-folder
+$ ./etc/load-new.sh malware-folder
 ```
 
 ## Stopping nvmtrace
 ```
 $ pgrep -f java.*nvmtrace | awk 'BEGIN{ORS=" "} 1' | sudo xargs kill -9
+$ sudo killall nvmtrace
 ```
 
 ## Source code navigation

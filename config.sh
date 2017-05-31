@@ -27,7 +27,7 @@ sudo apt-get -y install ant
 sudo apt-get -y install psmisc
 sudo apt-get -y install tcpdump
 sudo apt-get -y install conntrack
-sudo apt-get -y install openjdk-6-jdk
+sudo apt-get -y install openjdk-7-jdk
 sudo apt-get -y install ntfs-3g
 sudo apt-get -y install isc-dhcp-server
 sudo apt-get -y install postgresql

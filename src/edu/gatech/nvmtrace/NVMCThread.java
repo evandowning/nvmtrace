@@ -10,7 +10,7 @@ public class NVMCThread extends Thread
 {
     // How much time (in seconds) to run each executable for
     //public static final int nvmRunTime = 240+60;    // We'll run each sample for 4 minutes and give it an extra minute in case something's slow with the VM
-    public static final int nvmRunTime = 120+120;    // We'll run each sample for 4 minutes and give it an extra minute in case something's slow with the VM
+    public static final int nvmRunTime = 120+60;    // We'll run each sample for 4 minutes and give it an extra minute in case something's slow with the VM
 
     // How much time (in seconds) to pause to check for new sha256 in DB if none exists
     public static final int pollInterval = 16;
