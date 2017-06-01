@@ -145,6 +145,18 @@ public class ExecCommand
         }
     }
 
+    public static void disableRL(String name)
+    {
+        String[] disablerlCmd = {"wondershaper", "clear", name};
+        ExecCommand.execAndWait(disablerlCmd);
+    }
+
+    public static void enableRL(String name)
+    {
+        String[] enablerlCmd = {"wondershaper", name, "10000", "10000"};
+        ExecCommand.execAndWait(enablerlCmd);
+    }
+
     public static void resetTAP(String cidr, String name)
     {
         String[] resetCmd = {"ip", "addr", "add", cidr, "dev", name};

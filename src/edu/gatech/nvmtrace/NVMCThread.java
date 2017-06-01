@@ -9,8 +9,7 @@ import edu.gatech.util.*;
 public class NVMCThread extends Thread
 {
     // How much time (in seconds) to run each executable for
-    //public static final int nvmRunTime = 240+60;    // We'll run each sample for 4 minutes and give it an extra minute in case something's slow with the VM
-    public static final int nvmRunTime = 120+60;    // We'll run each sample for 4 minutes and give it an extra minute in case something's slow with the VM
+    public static final int nvmRunTime = 120;
 
     // How much time (in seconds) to pause to check for new sha256 in DB if none exists
     public static final int pollInterval = 16;
@@ -215,6 +214,9 @@ public class NVMCThread extends Thread
             // Reset TAP interface
             ExecCommand.resetTAP(cidr,this.getWorkspaceName());
 
+            // Rate-limit connection again
+            ExecCommand.enableRL(this.getWorkspaceName());
+
             // Start virtual machine, tcpdump session, and run malware
             Vector<Process> vmSession = this.startNVMSession(sha256);
 
@@ -223,6 +225,12 @@ public class NVMCThread extends Thread
 
             // Sleep a fixed amount of time to give malware a chance to run
             ExecCommand.sleep(NVMCThread.nvmRunTime);
+
+            // Disable rate-limiting temporarily so the analyzer can upload its results
+            ExecCommand.disableRL(this.getWorkspaceName());
+
+            // Let analyzer upload results to server
+            ExecCommand.sleep(30);
 
             // Stop virtual machine and tcpdump capture
             this.stopNVMSession(sha256, vmSession);
@@ -233,6 +241,9 @@ public class NVMCThread extends Thread
 
             // Reset TAP interface
             ExecCommand.resetTAP(cidr,this.getWorkspaceName());
+
+            // Rate-limit connection again
+            ExecCommand.enableRL(this.getWorkspaceName());
 
             this.logWrite("stopped nvm for " + sha256);
         }

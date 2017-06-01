@@ -84,7 +84,7 @@ do
     ip link set dev $name up
 
     # Rate-limit network interface (10 Mbps downlink, 10 Mbps uplink)
-    wondershaper $name  10000 10000
+    wondershaper $name 10000 10000
 
     # Modify DHCP configuration file to include this new host
     echo "" >> $dhcp
