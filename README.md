@@ -31,8 +31,6 @@ Debian 8 Linux (Jessie) and Java 7
      out of your own machine. Using tmux (or an equivalent) allows the script
      to continue running if you're kicked from your own server.
 
-  1. Modify ./etc/interfaces with your computer's IP address, netmask, and default gateway
-
   1. Modify ./src/edu/gatech/nvmtrace/NVMThreadDB.java to replace "dbUser" and "dbPass"
      accordingly. The configuration script will automatically create your username
      below, but you may modify it to change your username and password.

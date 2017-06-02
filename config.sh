@@ -55,9 +55,6 @@ myprint "Copying files..."
 sudo cp ./etc/nvmtrace.qcow3 /opt/gtisc/lib/
 sudo cp ./etc/nvmtrace.sh /opt/gtisc/bin/
 
-# Replace network interfaces file
-sudo cp ./etc/interfaces /etc/network/interfaces
-
 # Modify fstab file
 sudo bash -c "cat ./etc/fstab >> /etc/fstab"
 endprint
