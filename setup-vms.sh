@@ -58,6 +58,16 @@ rm -rf /mnt/ramfs/*
 
 endprint
 
+# Remove previous files and folders
+for ((i=0, j=1; j < 255; i++, j++))
+do
+    # Remove previous folders that may exist
+    rm -rf $rootfolder/$j*
+
+    # Delete network interface if it already exists
+    ip link delete vm$i > /dev/null 2>&1
+done
+
 # Create network interfaces and workspace folders for each VM
 for ((i=0, j=1; i < $1; i++, j++))
 do
@@ -70,14 +80,10 @@ do
     vm_ip=10.0.$j.2
     mac=02:00:00:00:00:$hex
 
-    # Remove previous folder that may exist
-    rm -rf $rootfolder/$j*
     # Create folder to store dumped system data
     datafolder=$rootfolder/$j-dump/
     mkdir -p $datafolder
 
-    # Delete network interface if it already exists
-    ip link delete $name
     # Create network interface for VM
     tunctl -u root -t $name
     ip addr add $router_ip/24 dev $name

@@ -11,6 +11,8 @@ fi
 MALWARE=`ls -1 $1`
 location=/opt/gtisc/nvmtrace/input
 
+echo "filename (sha256) database-output"
+
 for m in $MALWARE;
 do
     # Calculate SHA256
@@ -25,7 +27,7 @@ do
         query=`printf "UPDATE sample SET process_time=NULL WHERE sha256='$sha';"`
 
         out=`psql -d nvmtrace -At -c "$query"`
-        echo "$m: $out"
+        echo "$m ($sha): $out"
     # Else insert new sample
     else
         # Get timestamp of executable (in UNIX time)
@@ -36,7 +38,7 @@ do
 
         # Insert malware record into table
         out=`psql -d nvmtrace -At -c "$query"`
-        echo "$m: $out"
+        echo "$m ($sha): $out"
     fi
 
     # Copy malware executable into input location for nvmtrace to retrieve

@@ -163,6 +163,26 @@ public class ExecCommand
         ExecCommand.execAndWait(resetCmd);
     }
 
+    public static int uploadStarted(String path)
+    {
+        String[] uploadstartedCmd = {"sh", "-c", "ls -A " +  path + " | wc -l"};
+
+        int rv;
+        String result = ExecCommand.execProvideOutput(uploadstartedCmd)[0];
+
+        try
+        {
+            rv = Integer.parseInt(result.trim());
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            rv = 0;
+        }
+
+	    return rv;
+    }
+
     public static Process tcpdump(String iface, String file, String exp)
     {
         String[] tcpdumpCmd = 

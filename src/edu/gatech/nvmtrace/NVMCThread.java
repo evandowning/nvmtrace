@@ -226,11 +226,25 @@ public class NVMCThread extends Thread
             // Sleep a fixed amount of time to give malware a chance to run
             ExecCommand.sleep(NVMCThread.nvmRunTime);
 
-            // Disable rate-limiting temporarily so the analyzer can upload its results
+            // Wait until the analyzer starts uploading files
+            int count = 0;
+            while (ExecCommand.uploadStarted(this.getNVMExecPath() + "-dump/*") == 0)
+            {
+                ExecCommand.sleep(5);
+                count += 5;
+
+                // If we've waited long enough for the sample to finish, just quit
+                if (count > 600)
+                {
+                    break;
+                }
+            }
+
+            // Disable rate-limiting temporarily so the analyzer can upload its results quickly
             ExecCommand.disableRL(this.getWorkspaceName());
 
             // Let analyzer upload results to server
-            ExecCommand.sleep(30);
+            ExecCommand.sleep(15);
 
             // Stop virtual machine and tcpdump capture
             this.stopNVMSession(sha256, vmSession);
