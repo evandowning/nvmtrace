@@ -17,9 +17,9 @@ Debian 8 Linux (Jessie) and Java 7
 ## Setup
 
   1. Copy the iptables template file
-  ```
-    $ cp ./etc/iptables.rules.template ./etc/iptables.rules
-  ```
+     ```
+     $ cp ./etc/iptables.rules.template ./etc/iptables.rules
+     ```
 
   1. Modify ./etc/iptables.rules for your particular computer's setup. Replay all
      places between brackets "< >" with appropriate settings. Hint: you can
