@@ -9,4 +9,4 @@ NVMTRACE=/opt/gtisc/lib/java/nvmtrace.jar
 CONFIG=/opt/gtisc/etc/nvmtrace.cfg
 LOG=/var/log/nvmtrace.log
 
-nohup java -Xmx1024m -jar $NVMTRACE $CONFIG > $LOG 2>&1 &
+nohup java -Xmx3G -jar $NVMTRACE $CONFIG > $LOG 2>&1 &

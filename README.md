@@ -42,6 +42,8 @@ Debian 8 Linux (Jessie) and Java 7
      $ ./config.sh
      ```
 
+  1. Restart server (so /etc/fstab changes take effect)
+
   1. Run setup-vms.sh
      ```
      $ sudo ./setup-vms.sh
