@@ -2,8 +2,8 @@
 ipconfig /renew
 
 :: Variables for folder paths
-set "gnu=C:\Program Files\GnuWin32\bin"
-::set "gnu=C:\Program Files (x86)\GnuWin32\bin"
+::set "gnu=C:\Program Files\GnuWin32\bin"
+set "gnu=C:\Program Files (x86)\GnuWin32\bin"
 set "desktop=%USERPROFILE%\Desktop"
 
 :: Variables for output files

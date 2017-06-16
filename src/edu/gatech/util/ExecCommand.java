@@ -87,44 +87,44 @@ public class ExecCommand
 
     public static String[] cat(String path)
     {
-	    String[] catCmd = {"cat", path};
-	    return ExecCommand.execProvideOutput(catCmd);
+	    String[] cmd = {"cat", path};
+	    return ExecCommand.execProvideOutput(cmd);
     }
 
     public static void cp(String src, String dest)
     {
-        String[] cpCmd = {"cp", src, dest};
-        ExecCommand.execAndWait(cpCmd);
+        String[] cmd = {"cp", src, dest};
+        ExecCommand.execAndWait(cmd);
     }
 
     public static void shellmv(String src, String dest)
     {
-        String[] mvCmd = {"sh", "-c", "mv" + " " + src + " " + dest};
-        ExecCommand.execAndWait(mvCmd);
+        String[] cmd = {"sh", "-c", "mv" + " " + src + " " + dest};
+        ExecCommand.execAndWait(cmd);
     }
 
     public static void mkdir(String path)
     {
-	    String[] mkdirCmd = {"mkdir", "-p", path};
-	    ExecCommand.execAndWait(mkdirCmd);
+	    String[] cmd = {"mkdir", "-p", path};
+	    ExecCommand.execAndWait(cmd);
     }
 
     public static void rm(String path)
     {
-        String[] rmCmd = {"rm", "-f", path};
-        ExecCommand.execAndWait(rmCmd);
+        String[] cmd = {"rm", "-f", path};
+        ExecCommand.execAndWait(cmd);
     }
 
     public static void cntrkrm(String src)
     {
-        String[] cntrkrmCmd = {"conntrack", "-D", "-s", src};
-        ExecCommand.execProvideOutput(cntrkrmCmd);
+        String[] cmd = {"conntrack", "-D", "-s", src};
+        ExecCommand.execProvideOutput(cmd);
     }
 
     public static void chmod(String perm, String path)
     {
-        String[] chmodCmd = {"chmod", perm, path};
-        ExecCommand.execAndWait(chmodCmd);
+        String[] cmd = {"chmod", perm, path};
+        ExecCommand.execAndWait(cmd);
     }
 
     public static void sleep(int seconds)
@@ -147,28 +147,28 @@ public class ExecCommand
 
     public static void disableRL(String name)
     {
-        String[] disablerlCmd = {"wondershaper", "clear", name};
-        ExecCommand.execAndWait(disablerlCmd);
+        String[] cmd = {"wondershaper", "clear", name};
+        ExecCommand.execAndWait(cmd);
     }
 
     public static void enableRL(String name)
     {
-        String[] enablerlCmd = {"wondershaper", name, "10000", "10000"};
-        ExecCommand.execAndWait(enablerlCmd);
+        String[] cmd = {"wondershaper", name, "10000", "10000"};
+        ExecCommand.execAndWait(cmd);
     }
 
     public static void resetTAP(String cidr, String name)
     {
-        String[] resetCmd = {"ip", "addr", "add", cidr, "dev", name};
-        ExecCommand.execAndWait(resetCmd);
+        String[] cmd = {"ip", "addr", "add", cidr, "dev", name};
+        ExecCommand.execAndWait(cmd);
     }
 
     public static int uploadStarted(String path)
     {
-        String[] uploadstartedCmd = {"sh", "-c", "ls -A " +  path + " | wc -l"};
+        String[] cmd = {"sh", "-c", "ls -A " +  path + " | wc -l"};
 
         int rv;
-        String result = ExecCommand.execProvideOutput(uploadstartedCmd)[0];
+        String result = ExecCommand.execProvideOutput(cmd)[0];
 
         try
         {
@@ -185,9 +185,9 @@ public class ExecCommand
 
     public static Process tcpdump(String iface, String file, String exp)
     {
-        String[] tcpdumpCmd = 
+        String[] cmd = 
             {"tcpdump", "-U", "-s", "0", "-i", iface, "-w", file, exp};
-        return ExecCommand.execCommand(tcpdumpCmd);
+        return ExecCommand.execCommand(cmd);
     }
 
     public static Process qemu(String path, String image,
@@ -197,7 +197,21 @@ public class ExecCommand
         String cores = "2";      //number of cores to use
         String memory = "1.5G";  //amount of memory to use
 
-        String[] qemuCmd = 
+//      String[] cmd = 
+//          {path,
+//           "-enable-kvm",
+//           "-cpu", cpu,
+//           "-smp", cores,
+//           "-hda", image,
+//           "-m", memory,
+//           "-balloon", "virtio",
+//           "-vga", "cirrus",
+//           "-nographic",
+//           "-net", "nic,macaddr=" + mac + ",model=virtio",
+//           "-net", "tap,script=no,ifname=" + ifname,
+//           "-snapshot"};
+
+        String[] cmd = 
             {path,
              "-enable-kvm",
              "-cpu", cpu,
@@ -206,11 +220,11 @@ public class ExecCommand
              "-m", memory,
              "-balloon", "virtio",
              "-vga", "cirrus",
-             "-nographic",
+             "-vnc", ":0",
              "-net", "nic,macaddr=" + mac + ",model=virtio",
              "-net", "tap,script=no,ifname=" + ifname,
              "-snapshot"};
 
-        return ExecCommand.execCommand(qemuCmd);
+        return ExecCommand.execCommand(cmd);
     }
 }
