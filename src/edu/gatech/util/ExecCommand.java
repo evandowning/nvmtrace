@@ -197,20 +197,6 @@ public class ExecCommand
         String cores = "2";      //number of cores to use
         String memory = "1.5G";  //amount of memory to use
 
-//      String[] cmd = 
-//          {path,
-//           "-enable-kvm",
-//           "-cpu", cpu,
-//           "-smp", cores,
-//           "-hda", image,
-//           "-m", memory,
-//           "-balloon", "virtio",
-//           "-vga", "cirrus",
-//           "-nographic",
-//           "-net", "nic,macaddr=" + mac + ",model=virtio",
-//           "-net", "tap,script=no,ifname=" + ifname,
-//           "-snapshot"};
-
         String[] cmd = 
             {path,
              "-enable-kvm",
@@ -220,7 +206,7 @@ public class ExecCommand
              "-m", memory,
              "-balloon", "virtio",
              "-vga", "cirrus",
-             "-vnc", ":0",
+             "-nographic",
              "-net", "nic,macaddr=" + mac + ",model=virtio",
              "-net", "tap,script=no,ifname=" + ifname,
              "-snapshot"};
