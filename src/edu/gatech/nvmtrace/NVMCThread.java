@@ -234,7 +234,7 @@ public class NVMCThread extends Thread
                 count += 5;
 
                 // If we've waited long enough for the sample to finish, just quit
-                if (count > 600)
+                if (count > 300)
                 {
                     break;
                 }
