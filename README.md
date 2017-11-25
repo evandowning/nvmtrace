@@ -10,6 +10,9 @@ makes it appealing for large-scale executions of malware.
 Also I have gone through the trouble of documenting each source file as well
 as include instructions on how to modify it for your particular interests.
 
+This particular version handles submitting malware to a record-and-replay
+version of QEMU called PANDA (https://github.com/panda-re/panda).
+
 ## Requirements
 
 Debian 8 Linux (Jessie) and Java 7
@@ -35,7 +38,10 @@ Debian 8 Linux (Jessie) and Java 7
      accordingly. The configuration script will automatically create your username
      below, but you may modify it to change your username and password.
 
-  1. Set up base VM image. See [README\_vm.md](README_vm.md)
+  1. Install PANDA (https://github.com/panda-re/panda). See [README\_panda.md](README_panda.md)
+     for hints.
+
+  1. Set up base VM image. See [README\_panda\_vm.md](README_panda_vm.md)
 
   1. Run configuration
      ```

@@ -1,3 +1,6 @@
+:: Sleep for a few seconds before we begin downloading things
+timeout 5
+
 :: Renew the DHCP lease
 ipconfig /renew
 
@@ -22,20 +25,8 @@ set /p run=<"%exe%"
 del "%server%"
 del "%exe%"
 
-:: Download analyzer to run
-"%gnu%\wget" http://%ip%/analyzer.zip -O "%desktop%\analyzer.zip"
-
-:: Unzip analyzer
-"%gnu%\unzip" "%desktop%\analyzer.zip" -d "%desktop%"
-
-:: Delete zip file
-del "%desktop%\analyzer.zip"
-
 :: Download executable to run
 "%gnu%\wget" http://%ip%/%run% -O "%desktop%\artifact"
 
-:: Run analyzer
-call "%desktop%\windows-analyzer\run.bat"
-
-:: Upload results (or whatever the analyzer wants to do)
-call "%desktop%\windows-analyzer\finish.bat"
+:: Run executable
+start "%desktop%\artifact"
