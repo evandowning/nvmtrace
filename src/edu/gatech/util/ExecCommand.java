@@ -208,8 +208,28 @@ public class ExecCommand
              "-vga", "cirrus",
              "-nographic",
              "-net", "nic,macaddr=" + mac + ",model=virtio",
-             "-net", "tap,script=no,ifname=" + ifname,
-             "-snapshot"};
+             "-net", "tap,script=no,ifname=" + ifname};
+
+        return ExecCommand.execCommand(cmd);
+    }
+
+    public static Process removeSnapshot(String image)
+    {
+        String[] cmd = 
+            {"rm", image};
+
+        return ExecCommand.execCommand(cmd);
+    }
+
+    // From: https://wiki.qemu.org/Documentation/CreateSnapshot
+    public static Process resetSnapshot(String image)
+    {
+        String[] cmd = 
+            {"qemu-img",
+             "create",
+             "-f", "qcow2",
+             "-b", "/opt/gtisc/lib/nvmtrace.qcow3",
+            image};
 
         return ExecCommand.execCommand(cmd);
     }

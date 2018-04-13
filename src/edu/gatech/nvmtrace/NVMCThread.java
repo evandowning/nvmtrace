@@ -249,6 +249,10 @@ public class NVMCThread extends Thread
             // Stop virtual machine and tcpdump capture
             this.stopNVMSession(sha256, vmSession);
 
+            // Reset snapshot for backing file
+            ExecCommand.removeSnapshot(this.getNVMDiskPath());
+            ExecCommand.resetSnapshot(this.getNVMDiskPath());
+
             // Move system logs to workspace
             ExecCommand.mkdir(this.config.getSystemDumpPath(sha256));
             ExecCommand.shellmv(this.getNVMExecPath() + "-dump/*", this.config.getSystemDumpPath(sha256) + "/");
