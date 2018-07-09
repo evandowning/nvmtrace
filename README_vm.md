@@ -70,7 +70,7 @@ $ /etc/init.d/nginx restart
             -cdrom winxpsp3.iso \
             -net none \
             -usbdevice tablet \
-            -vnc :0
+            -vnc localhost:0
         ```
 
       - Windows 7:
@@ -85,7 +85,7 @@ $ /etc/init.d/nginx restart
             -cdrom win7.iso \
             -net none \
             -usbdevice tablet \
-            -vnc :0
+            -vnc localhost:0
         ```
 
   3. VNC into 5900
@@ -176,7 +176,7 @@ $ ssh -TNL 5900:localhost:5900 malware-server
             -net nic,macaddr=02:00:00:00:00:01,model=virtio \
             -net tap,script=no,ifname=vm0 \
             -usbdevice tablet \
-            -vnc :0
+            -vnc localhost:0
         ```
 
       - Windows 7:
@@ -193,7 +193,7 @@ $ ssh -TNL 5900:localhost:5900 malware-server
             -net nic,macaddr=02:00:00:00:00:01,model=virtio \
             -net tap,script=no,ifname=vm0 \
             -usbdevice tablet \
-            -vnc :0
+            -vnc localhost:0
         ```
 
   1. Click: Control Panel -> Hardware -> Device Manager
@@ -238,7 +238,7 @@ $ ssh -TNL 5900:localhost:5900 malware-server
             -net nic,macaddr=02:00:00:00:00:01,model=virtio \
             -net tap,script=no,ifname=vm0 \
             -usbdevice tablet \
-            -vnc :0
+            -vnc localhost:0
         ```
 
       - Windows 7:
@@ -254,7 +254,7 @@ $ ssh -TNL 5900:localhost:5900 malware-server
             -net nic,macaddr=02:00:00:00:00:01,model=virtio \
             -net tap,script=no,ifname=vm0 \
             -usbdevice tablet \
-            -vnc :0
+            -vnc localhost:0
         ```
 
   1. This is the part where you install whatever system-side analysis components
