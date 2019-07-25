@@ -210,6 +210,22 @@ public class ExecCommand
              "-net", "nic,macaddr=" + mac + ",model=virtio",
              "-net", "tap,script=no,ifname=" + ifname};
 
+        /* Debugging */
+/*
+        String[] cmd = 
+            {path,
+             "-enable-kvm",
+             "-cpu", cpu,
+             "-smp", cores,
+             "-hda", image,
+             "-m", memory,
+             "-balloon", "virtio",
+             "-vga", "cirrus",
+             "-vnc", "localhost:" + ifname.substring(2),
+             "-net", "nic,macaddr=" + mac + ",model=virtio",
+             "-net", "tap,script=no,ifname=" + ifname};
+*/
+
         return ExecCommand.execCommand(cmd);
     }
 
