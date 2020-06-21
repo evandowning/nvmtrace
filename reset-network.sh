@@ -4,7 +4,7 @@
 
 myprint()
 {
-    title="Nvmtrace: "
+    title="nvmtrace: "
 
     echo -e "\e[0;34m[$title]\e[0m \e[1;33m$1\e[0m"
 }

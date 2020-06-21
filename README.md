@@ -12,7 +12,8 @@ as include instructions on how to modify it for your particular interests.
 
 ## Requirements
 
-Debian 8 Linux (Jessie) and Java 7
+  * Debian 10 (Buster)
+  * Java 11
 
 ## Setup
 
@@ -44,6 +45,8 @@ Debian 8 Linux (Jessie) and Java 7
 
   1. Restart server (so /etc/fstab changes take effect)
 
+  1. Open `/etc/default/isc-dhcp-server` and set `INTERFACESv4` with the VMs' interfaces.
+
   1. Run setup-vms.sh
      ```
      $ sudo ./setup-vms.sh
@@ -51,7 +54,7 @@ Debian 8 Linux (Jessie) and Java 7
 
 ## Installing
 
-If you already have Java installed, make sure you switch to using Java 7 to compile and run:
+If you already have Java installed, make sure you switch to using Java 11 to compile and run:
 
 ```
 $ sudo update-alternatives --config java

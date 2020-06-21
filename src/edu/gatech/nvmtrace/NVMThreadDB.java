@@ -13,19 +13,19 @@ public class NVMThreadDB
 
     static
     {
-	    try
+        try
         {
-            Class.forName("org.postgresql.Driver").newInstance();
+            Class.forName("org.postgresql.Driver").getDeclaredConstructor().newInstance();
         }
         catch (Exception e)
         {
             e.printStackTrace();
-	    }
+        }
     }
 
     private Connection currentConnection() throws SQLException
     {
-	    if (this.connection == null)
+        if (this.connection == null)
         {
             this.connection = DriverManager.
                 getConnection("jdbc:postgresql://" + NVMThreadDB.dbHost +

@@ -4,7 +4,7 @@
 
 myprint()
 {
-    title="Nvmtrace-modified setup"
+    title="nvmtrace setup"
 
     echo -e "\e[0;34m[$title]\e[0m \e[1;33m$1\e[0m"
 }
@@ -12,6 +12,7 @@ myprint()
 endprint()
 {
     echo -e "\e[0;32m[Done]\e[0m"
+    echo -e "\e[1;33m==============================================\e[0m"
 }
 
 # Check for correct number of parameters
@@ -20,19 +21,24 @@ if [[ $# -ne 0 ]]; then
     exit 1
 fi
 
+# Exit if error occurs
+set -e
+
 # Install packages
 myprint "Installing dependencies..."
-sudo apt-get -y install uml-utilities
-sudo apt-get -y install ant
-sudo apt-get -y install psmisc
-sudo apt-get -y install tcpdump
-sudo apt-get -y install conntrack
-sudo apt-get -y install openjdk-7-jdk
-sudo apt-get -y install ntfs-3g
-sudo apt-get -y install isc-dhcp-server
-sudo apt-get -y install postgresql
-sudo apt-get -y install nginx
-sudo apt-get -y install wondershaper
+sudo apt -y install uml-utilities
+sudo apt -y install ant
+sudo apt -y install psmisc
+sudo apt -y install tcpdump
+sudo apt -y install conntrack
+sudo apt -y install openjdk-11-jdk
+sudo apt -y install ntfs-3g
+sudo apt -y install isc-dhcp-server
+sudo apt -y install postgresql
+sudo apt -y install nginx
+sudo apt -y install wondershaper
+sudo apt -y install qemu qemu-utils
+sudo apt -y install --no-install-recommends qemu-kvm libvirt-clients libvirt-daemon-system
 endprint
 
 # Create necessary directories
@@ -73,6 +79,7 @@ sudo sh -c "echo '#!/bin/sh\n/sbin/iptables-restore < /etc/iptables.rules' > /et
 sudo chmod +x /etc/network/if-pre-up.d/iptables
 endprint
 
+set +e
 # Create postgresql role
 myprint "Creating postgresql role"
 user=`whoami`
@@ -80,3 +87,4 @@ sudo -u postgres bash -c "createuser -a $user"
 createdb nvmtrace
 psql -d nvmtrace -f ./etc/nvmtrace.sql
 endprint
+set -e

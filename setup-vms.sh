@@ -4,7 +4,7 @@
 
 myprint()
 {
-    title="Nvmtrace: VM setup"
+    title="nvmtrace: VM setup"
 
     echo -e "\e[0;34m[$title]\e[0m \e[1;33m$1\e[0m"
 }
@@ -12,6 +12,7 @@ myprint()
 endprint()
 {
     echo -e "\e[0;32m[Done]\e[0m"
+    echo -e "\e[1;33m==============================================\e[0m"
 }
 
 # Check for correct number of parameters

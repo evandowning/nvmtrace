@@ -21,10 +21,11 @@
         description="compile the source " >
         <!-- Compile the java code from ${src} into ${bin} -->
         <javac srcdir="${src}" destdir="${bin}" includeantruntime="false">
+            <compilerarg value="-Xlint:deprecation" />
             <classpath>
                 <pathelement path="${classpath}"/>
                 <pathelement location="lib/postgresql.jar"/>
-            </classpath> 
+            </classpath>
         </javac>
     </target>
 
