@@ -87,8 +87,8 @@ public class ExecCommand
 
     public static String[] cat(String path)
     {
-	    String[] cmd = {"cat", path};
-	    return ExecCommand.execProvideOutput(cmd);
+        String[] cmd = {"cat", path};
+        return ExecCommand.execProvideOutput(cmd);
     }
 
     public static void cp(String src, String dest)
@@ -105,8 +105,8 @@ public class ExecCommand
 
     public static void mkdir(String path)
     {
-	    String[] cmd = {"mkdir", "-p", path};
-	    ExecCommand.execAndWait(cmd);
+        String[] cmd = {"mkdir", "-p", path};
+        ExecCommand.execAndWait(cmd);
     }
 
     public static void rm(String path)
@@ -180,7 +180,7 @@ public class ExecCommand
             rv = 0;
         }
 
-	    return rv;
+        return rv;
     }
 
     public static Process tcpdump(String iface, String file, String exp)
@@ -204,7 +204,7 @@ public class ExecCommand
              "-smp", cores,
              "-hda", image,
              "-m", memory,
-             "-balloon", "virtio",
+             "-device", "virtio-balloon",
              "-vga", "cirrus",
              "-nographic",
              "-net", "nic,macaddr=" + mac + ",model=virtio",
@@ -219,7 +219,7 @@ public class ExecCommand
              "-smp", cores,
              "-hda", image,
              "-m", memory,
-             "-balloon", "virtio",
+             "-device", "virtio-balloon",
              "-vga", "cirrus",
              "-vnc", "localhost:" + ifname.substring(2),
              "-net", "nic,macaddr=" + mac + ",model=virtio",

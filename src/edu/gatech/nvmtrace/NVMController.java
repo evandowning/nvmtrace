@@ -22,7 +22,7 @@ public class NVMController
         }
 
         // Get workspace paths
-	    String[] workspacePaths = ExecCommand.cat(args[0]);
+        String[] workspacePaths = ExecCommand.cat(args[0]);
 
         // Construct threads for each workspace
         NVMCThread[] nvmCThreads = new NVMCThread[workspacePaths.length];
@@ -32,14 +32,14 @@ public class NVMController
         }
 
         // Create thread handler
-	    NVMSThread nvmSThread = new NVMSThread();
+        NVMSThread nvmSThread = new NVMSThread();
         for (int i = 0; i < nvmCThreads.length; i++)
         {
             nvmSThread.addNVMCThread(nvmCThreads[i]);
         }
 
         // Register new VM shutdown hook
-	    Runtime.getRuntime().addShutdownHook(nvmSThread);
+        Runtime.getRuntime().addShutdownHook(nvmSThread);
 
         // Run threads for each workspace
         for (int i = 0; i < nvmCThreads.length; i++)

@@ -9,13 +9,13 @@ public class NVMSThread extends Thread
     // Declare vector to hold threads
     public NVMSThread()
     {
-	    this.nvmCThreads = new Vector<NVMCThread>();
+        this.nvmCThreads = new Vector<NVMCThread>();
     }
 
     // Function to add threads to vector
     public void addNVMCThread(NVMCThread nvmCThread)
     {
-	    this.nvmCThreads.add(nvmCThread);
+        this.nvmCThreads.add(nvmCThread);
     }
 
     // Function to run each thread

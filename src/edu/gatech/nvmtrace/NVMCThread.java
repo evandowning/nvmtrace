@@ -62,19 +62,19 @@ public class NVMCThread extends Thread
     // Function to retrieve the MAC address of the virtual machine
     public String getMacAddr()
     {
-	    return ExecCommand.cat(this.basePath + "mac")[0];
+        return ExecCommand.cat(this.basePath + "mac")[0];
     }
 
     // Function to retrieve the IP address of the virtual machine
     public String getNetworkAddr()
     {
-	    return ExecCommand.cat(this.basePath + "ip")[0];
+        return ExecCommand.cat(this.basePath + "ip")[0];
     }
 
     // Function to retrieve the location of the virtual machine image
     public String getNVMDiskPath()
     {
-	    return ExecCommand.cat(this.basePath + "disk")[0];
+        return ExecCommand.cat(this.basePath + "disk")[0];
     }
 
     /*
@@ -83,19 +83,19 @@ public class NVMCThread extends Thread
     */
     public String getNVMExecPath()
     {
-	    return ExecCommand.cat(this.basePath + "exec")[0];
+        return ExecCommand.cat(this.basePath + "exec")[0];
     }
 
     // Function to retrieve the location of the virtual machine executable.
     public String getVMPath()
     {
-	    return ExecCommand.cat(this.basePath + "vm")[0];
+        return ExecCommand.cat(this.basePath + "vm")[0];
     }
 
     // Function to retrieve the name of the virtual machine
     public String getWorkspaceName()
     {
-	    return ExecCommand.cat(this.basePath + "name")[0];
+        return ExecCommand.cat(this.basePath + "name")[0];
     }
 
     // Function to write to nvmtrace log file
@@ -104,7 +104,7 @@ public class NVMCThread extends Thread
         final String logTimeFormat = "yyyyMMdd HH:mm:ss";
 
         String logTime = 
-	        new SimpleDateFormat(logTimeFormat).format(new Date());
+            new SimpleDateFormat(logTimeFormat).format(new Date());
 
         try
         {

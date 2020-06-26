@@ -55,10 +55,13 @@ as include instructions on how to modify it for your particular interests.
 ## Installing
 
 If you already have Java installed, make sure you switch to using Java 11 to compile and run:
-
 ```
 $ sudo update-alternatives --config java
 ```
+
+If you're using a different or newer version of postgresql, download the jdbc file and put it into `./lib/postgresql.jar`.
+
+  * https://jdbc.postgresql.org/download.html
 
 Now build and move nvmtrace:
 ```
