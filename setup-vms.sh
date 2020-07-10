@@ -86,7 +86,7 @@ do
     mkdir -p $datafolder
 
     # Create network interface for VM
-    tunctl -u root -t $name
+    tunctl -t $name -g libvirt
     ip addr add $router_ip/24 dev $name
     ip link set dev $name up
 
@@ -140,6 +140,8 @@ do
 
     # Make a backing file of the VM image to use
     qemu-img create -f qcow2 -b /opt/gtisc/lib/nvmtrace.qcow3 /mnt/ramfs/nvmtrace$i\.qcow3
+    chown root:libvirt /mnt/ramfs/nvmtrace$i\.qcow3
+    chmod 660 /mnt/ramfs/nvmtrace$i\.qcow3
 
     # Create and configure nvmtrace workspace for VM
     ws=/opt/gtisc/nvmtrace/workspaces/$name/

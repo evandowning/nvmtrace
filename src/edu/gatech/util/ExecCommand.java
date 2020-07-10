@@ -198,32 +198,21 @@ public class ExecCommand
         String memory = "1.5G";  //amount of memory to use
 
         String[] cmd = 
-            {path,
-             "-enable-kvm",
-             "-cpu", cpu,
-             "-smp", cores,
-             "-hda", image,
-             "-m", memory,
-             "-device", "virtio-balloon",
-             "-vga", "cirrus",
-             "-nographic",
-             "-net", "nic,macaddr=" + mac + ",model=virtio",
-             "-net", "tap,script=no,ifname=" + ifname};
+            {"runuser","-l","<user>","-c",path + " -enable-kvm "
+                                             + " -cpu " + cpu
+                                             + " -smp " + cores
+                                             + " -hda " + image
+                                             + " -m " + memory
+                                             + " -device " + " virtio-balloon "
+                                             + " -vga " + " cirrus "
+                                             + " -nographic "
+                                             + " -net " + " nic,macaddr=" + mac + ",model=virtio "
+                                             + " -net " + " tap,script=no,ifname=" + ifname
+            };
 
         /* Debugging */
 /*
-        String[] cmd = 
-            {path,
-             "-enable-kvm",
-             "-cpu", cpu,
-             "-smp", cores,
-             "-hda", image,
-             "-m", memory,
-             "-device", "virtio-balloon",
-             "-vga", "cirrus",
-             "-vnc", "localhost:" + ifname.substring(2),
-             "-net", "nic,macaddr=" + mac + ",model=virtio",
-             "-net", "tap,script=no,ifname=" + ifname};
+             " -vnc " + " localhost:" + ifname.substring(2)
 */
 
         return ExecCommand.execCommand(cmd);
@@ -246,6 +235,19 @@ public class ExecCommand
              "-f", "qcow2",
              "-b", "/opt/gtisc/lib/nvmtrace.qcow3",
             image};
+
+        return ExecCommand.execCommand(cmd);
+    }
+
+    public static Process setPermissions(String image)
+    {
+        String[] cmd = 
+            {"chown",
+             "root:libvirt",
+            image, ";",
+            "chmod", "660",
+            image
+            };
 
         return ExecCommand.execCommand(cmd);
     }

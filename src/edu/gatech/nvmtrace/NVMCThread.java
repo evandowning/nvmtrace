@@ -252,6 +252,7 @@ public class NVMCThread extends Thread
             // Reset snapshot for backing file
             ExecCommand.removeSnapshot(this.getNVMDiskPath());
             ExecCommand.resetSnapshot(this.getNVMDiskPath());
+            ExecCommand.setPermissions(this.getNVMDiskPath());
 
             // Move system logs to workspace
             ExecCommand.mkdir(this.config.getSystemDumpPath(sha256));

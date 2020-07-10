@@ -32,9 +32,12 @@ as include instructions on how to modify it for your particular interests.
      out of your own machine. Using tmux (or an equivalent) allows the script
      to continue running if you're kicked from your own server.
 
-  1. Modify ./src/edu/gatech/nvmtrace/NVMThreadDB.java to replace "dbUser" and "dbPass"
+  1. Modify `./src/edu/gatech/nvmtrace/NVMThreadDB.java` to replace "dbUser" and "dbPass"
      accordingly. The configuration script will automatically create your username
      below, but you may modify it to change your username and password.
+
+  1. Modify `./src/edu/gatech/util/ExecCommand.java` to replace "\<user\>" with
+     a user who has permissions for the groups `libvirt` and `kvm`.
 
   1. Set up base VM image. See [README\_vm.md](README_vm.md)
 
@@ -69,6 +72,9 @@ $ ant
 $ sudo cp ./dist/nvmtrace.jar /opt/gtisc/lib/java/
 $ ant clean
 ```
+
+## After reboot
+If you have to reboot the machine nvmtrace runs on, execute `$ sudo ./setup-vms.sh` after startup.
 
 ## Comments
 
