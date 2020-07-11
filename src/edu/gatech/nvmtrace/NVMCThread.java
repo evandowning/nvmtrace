@@ -217,6 +217,10 @@ public class NVMCThread extends Thread
             // Rate-limit connection again
             ExecCommand.enableRL(this.getWorkspaceName());
 
+            // Set permissions
+            ExecCommand.chmod("660", this.getNVMDiskPath());
+            ExecCommand.chown("root:libvirt", this.getNVMDiskPath());
+
             // Start virtual machine, tcpdump session, and run malware
             Vector<Process> vmSession = this.startNVMSession(sha256);
 
@@ -252,7 +256,6 @@ public class NVMCThread extends Thread
             // Reset snapshot for backing file
             ExecCommand.removeSnapshot(this.getNVMDiskPath());
             ExecCommand.resetSnapshot(this.getNVMDiskPath());
-            ExecCommand.setPermissions(this.getNVMDiskPath());
 
             // Move system logs to workspace
             ExecCommand.mkdir(this.config.getSystemDumpPath(sha256));

@@ -127,6 +127,12 @@ public class ExecCommand
         ExecCommand.execAndWait(cmd);
     }
 
+    public static void chown(String perm, String path)
+    {
+        String[] cmd = {"chown", perm, path};
+        ExecCommand.execAndWait(cmd);
+    }
+
     public static void sleep(int seconds)
     {
         if (seconds < 0)
@@ -235,19 +241,6 @@ public class ExecCommand
              "-f", "qcow2",
              "-b", "/opt/gtisc/lib/nvmtrace.qcow3",
             image};
-
-        return ExecCommand.execCommand(cmd);
-    }
-
-    public static Process setPermissions(String image)
-    {
-        String[] cmd = 
-            {"chown",
-             "root:libvirt",
-            image, ";",
-            "chmod", "660",
-            image
-            };
 
         return ExecCommand.execCommand(cmd);
     }
