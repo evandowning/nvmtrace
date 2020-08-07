@@ -9,7 +9,7 @@ import edu.gatech.util.*;
 public class NVMCThread extends Thread
 {
     // How much time (in seconds) to run each executable for
-    public static final int nvmRunTime = 120;
+    public static final int nvmRunTime = 120 + 60;  // + 60 seconds for waiting for the machine to connect to the network
 
     // How much time (in seconds) to pause to check for new sha256 in DB if none exists
     public static final int pollInterval = 16;
@@ -253,13 +253,13 @@ public class NVMCThread extends Thread
             // Stop virtual machine and tcpdump capture
             this.stopNVMSession(sha256, vmSession);
 
-            // Reset snapshot for backing file
-            ExecCommand.removeSnapshot(this.getNVMDiskPath());
-            ExecCommand.resetSnapshot(this.getNVMDiskPath());
-
             // Move system logs to workspace
             ExecCommand.mkdir(this.config.getSystemDumpPath(sha256));
             ExecCommand.shellmv(this.getNVMExecPath() + "-dump/*", this.config.getSystemDumpPath(sha256) + "/");
+
+            // Reset snapshot for backing file
+            ExecCommand.removeSnapshot(this.getNVMDiskPath());
+            ExecCommand.resetSnapshot(this.getNVMDiskPath());
 
             // Reset TAP interface
             ExecCommand.resetTAP(cidr,this.getWorkspaceName());
